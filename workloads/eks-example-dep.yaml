@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: eks-example-mkt
+  namespace: eks-example-mkt
+  labels:
+    app: eks-example-mkt
+  annotations:
+    # Container Image Automated Updates
+    flux.weave.works/automated: "true"
+    # do not apply this manifest on the cluster
+    #flux.weave.works/ignore: "true"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: eks-example-mkt
+  template:
+    metadata:
+      labels:
+        app: eks-example-mkt
+    spec:
+      containers:
+      - name: eks-example-mkt
+        image: 429178776329.dkr.ecr.ap-northeast-2.amazonaws.com/eks-example-mkt:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80
+          name: http
+          protocol: TCP
+        livenessProbe:
+          httpGet:
+            path: /
+            port: http
+        readinessProbe:
+          httpGet:
+            path: /
+            port: http
